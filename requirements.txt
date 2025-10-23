@@ -5,8 +5,6 @@ altair==4.2.2
 annotated-types==0.7.0
 anyio==4.11.0
 attrs==25.4.0
-audio-recorder-streamlit==0.0.10
-AudioRecorder==0.1
 blinker==1.9.0
 cachetools==6.2.1
 certifi==2025.10.5
