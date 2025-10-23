@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import time
 import wave
-from pydub import AudioSegment
+# from pydub import AudioSegment
 from langchain_core.prompts import (
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
@@ -55,15 +55,14 @@ def save_to_wav(llm_response_audio, audio_output_file_path):
         audio_output_file_path: 出力先のファイルパス
     """
 
-    temp_audio_output_filename = f"{ct.AUDIO_OUTPUT_DIR}/temp_audio_output_{int(time.time())}.mp3"
-    with open(temp_audio_output_filename, "wb") as temp_audio_output_file:
-        temp_audio_output_file.write(llm_response_audio)
+    with open(audio_output_file_path, "wb") as audio_output_file:
+        audio_output_file.write(llm_response_audio)
     
-    audio_mp3 = AudioSegment.from_file(temp_audio_output_filename, format="mp3")
-    audio_mp3.export(audio_output_file_path, format="wav")
+ #   audio_mp3 = AudioSegment.from_file(temp_audio_output_filename, format="mp3")
+ #   audio_mp3.export(audio_output_file_path, format="wav")
 
     # 音声出力用に一時的に作ったmp3ファイルを削除
-    os.remove(temp_audio_output_filename)
+#    os.remove(temp_audio_output_filename)
 
 def play_wav(audio_output_file_path, speed=1.0):
     """
@@ -73,20 +72,20 @@ def play_wav(audio_output_file_path, speed=1.0):
         speed: 再生速度（1.0が通常速度、0.5で半分の速さ、2.0で倍速など）
     """
 
-    # 音声ファイルの読み込み
-    audio = AudioSegment.from_wav(audio_output_file_path)
-    
-    # 速度を変更
-    if speed != 1.0:
-        # frame_rateを変更することで速度を調整
-        modified_audio = audio._spawn(
-            audio.raw_data, 
-            overrides={"frame_rate": int(audio.frame_rate * speed)}
-        )
-        # 元のframe_rateに戻すことで正常再生させる（ピッチを保持したまま速度だけ変更）
-        modified_audio = modified_audio.set_frame_rate(audio.frame_rate)
-
-        modified_audio.export(audio_output_file_path, format="wav")
+#    # 音声ファイルの読み込み
+#    audio = AudioSegment.from_wav(audio_output_file_path)
+#    
+#    # 速度を変更
+#    if speed != 1.0:
+#        # frame_rateを変更することで速度を調整
+#        modified_audio = audio._spawn(
+#            audio.raw_data, 
+#            overrides={"frame_rate": int(audio.frame_rate * speed)}
+#        )
+#        # 元のframe_rateに戻すことで正常再生させる（ピッチを保持したまま速度だけ変更）
+#        modified_audio = modified_audio.set_frame_rate(audio.frame_rate)
+#
+#        modified_audio.export(audio_output_file_path, format="wav")
 
 
     # Streamlitで再生
