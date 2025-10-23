@@ -55,7 +55,6 @@ pillow==11.3.0
 propcache==0.4.1
 protobuf==6.33.0
 pyarrow==21.0.0
-PyAudio==0.2.14
 pydantic==2.12.3
 pydantic-settings==2.11.0
 pydantic_core==2.41.4
