@@ -31,8 +31,7 @@ if "messages" not in st.session_state:
     st.session_state.qa_messages = []                                               # ユーザとAIのQ&A履歴
     st.session_state.user_input_mode = ""                                           # ユーザの入力モード（音声 or テキスト）
     st.session_state.pre_situation = ""                                             # 前回のシチュエーション
-    st.session_state.openai_obj = OpenAI()      # OpenAIオブジェクト
-#    st.session_state.openai_obj = OpenAI(api_key=os.environ["OPENAI_API_KEY"])      # OpenAIオブジェクト
+    st.session_state.openai_obj = OpenAI(api_key=os.environ["OPENAI_API_KEY"])      # OpenAIオブジェクト
     st.session_state.llm = ChatOpenAI(model_name="gpt-5-nano", temperature=0.5)    # LLMオブジェクト
     st.session_state.conversation_memory = ConversationSummaryBufferMemory(
         llm=st.session_state.llm,
