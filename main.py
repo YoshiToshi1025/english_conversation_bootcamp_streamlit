@@ -24,6 +24,7 @@ load_dotenv()   # .envファイルの読み込み
 app_title = ct.APP_NAME + " (ver." + ct.APP_VERSION + ")"    # タイトルにアプリケーション名とバージョンを設定
 st.set_page_config(page_title=app_title)    # ページタイトル設定
 st.markdown(f"## {app_title}")  # タイトル表示
+ft.clean_audio_temp_dir()  # 音声一時ファイルのクリーンアップ
 
 # 初期設定
 if "messages" not in st.session_state:
@@ -57,7 +58,7 @@ with st.sidebar:
     st.session_state.ai_conversation_setting_situation = st.selectbox("シチュエーション", options=ct.SITUATION_OPTION, label_visibility="visible")
     st.session_state.ai_conversation_setting_conversation_level = st.selectbox("会話レベル", options=ct.CONVERSATION_LEVEL_OPTION, label_visibility="visible")
     st.session_state.ai_conversation_setting_language = st.selectbox("言語", options=ct.LANGUAGE_OPTION, label_visibility="visible")
-    st.session_state.ai_conversation_setting_speed_key = st.selectbox("発声速度", options=list(ct.PLAY_SPEED_OPTION.keys()), index=1, label_visibility="visible")
+    st.session_state.ai_conversation_setting_speed_key = st.selectbox("発声速度", options=list(ct.PLAY_SPEED_OPTION.keys()), index=0, label_visibility="visible")
     st.session_state.ai_conversation_setting_speed_value = ct.PLAY_SPEED_OPTION[st.session_state.ai_conversation_setting_speed_key]
 
     # シチュエーションが変更された場合に会話履歴をリセット
@@ -142,7 +143,7 @@ with conversation_tab:
                 input=llm_response
             )
 
-            # 一旦mp3形式で音声ファイル作成後、wav形式に変換
+            # wav形式データをファイル保存
             audio_output_file_path = f"{ct.AUDIO_OUTPUT_DIR}/audio_output_{int(time.time())}.wav"
             ft.save_to_wav(llm_response_audio.content, audio_output_file_path)
 

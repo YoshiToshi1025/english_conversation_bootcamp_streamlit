@@ -57,12 +57,6 @@ def save_to_wav(llm_response_audio, audio_output_file_path):
 
     with open(audio_output_file_path, "wb") as audio_output_file:
         audio_output_file.write(llm_response_audio)
-    
- #   audio_mp3 = AudioSegment.from_file(temp_audio_output_filename, format="mp3")
- #   audio_mp3.export(audio_output_file_path, format="wav")
-
-    # 音声出力用に一時的に作ったmp3ファイルを削除
-#    os.remove(temp_audio_output_filename)
 
 def play_wav(audio_output_file_path, speed=1.0):
     """
@@ -72,48 +66,13 @@ def play_wav(audio_output_file_path, speed=1.0):
         speed: 再生速度（1.0が通常速度、0.5で半分の速さ、2.0で倍速など）
     """
 
-#    # 音声ファイルの読み込み
-#    audio = AudioSegment.from_wav(audio_output_file_path)
-#    
-#    # 速度を変更
-#    if speed != 1.0:
-#        # frame_rateを変更することで速度を調整
-#        modified_audio = audio._spawn(
-#            audio.raw_data, 
-#            overrides={"frame_rate": int(audio.frame_rate * speed)}
-#        )
-#        # 元のframe_rateに戻すことで正常再生させる（ピッチを保持したまま速度だけ変更）
-#        modified_audio = modified_audio.set_frame_rate(audio.frame_rate)
-#
-#        modified_audio.export(audio_output_file_path, format="wav")
-
-
     # Streamlitで再生
     audio_file = open(audio_output_file_path, 'rb')
     audio_bytes = audio_file.read()
     st.audio(audio_bytes, format='audio/wav', autoplay=True)
 
-#    # PyAudioで再生
-#    with wave.open(audio_output_file_path, 'rb') as play_target_file:
-#        p = pyaudio.PyAudio()
-#        stream = p.open(
-#            format=p.get_format_from_width(play_target_file.getsampwidth()),
-#            channels=play_target_file.getnchannels(),
-#            rate=play_target_file.getframerate(),
-#            output=True
-#        )
-#
-#        data = play_target_file.readframes(1024)
-#        while data:
-#            stream.write(data)
-#            data = play_target_file.readframes(1024)
-#
-#        stream.stop_stream()
-#        stream.close()
-#        p.terminate()
-    
-    # LLMからの回答の音声ファイルを削除
-#    os.remove(audio_output_file_path)
+    # LLMからの回答の音声ファイルを削除(※直後には削除できない)
+    # os.remove(audio_output_file_path)
 
 def create_chain(system_template):
     """
@@ -187,3 +146,41 @@ def create_evaluation():
     llm_response_evaluation = st.session_state.chain_evaluation.predict(input="")
 
     return llm_response_evaluation
+
+def is_old_enough(file_path):
+    """
+    ファイルが一定時間以上前に作成されたかどうかをチェック
+    Args:
+        file_path: チェックするファイルのパス
+        threshold_seconds: 閾値となる時間（秒）
+    Returns:
+        bool: 一定時間以上前に作成された場合はTrue、そうでない場合はFalse
+    """
+    file_creation_time = os.path.getctime(file_path)
+    current_time = time.time()
+    return (current_time - file_creation_time) > ct.AUDIO_TEMP_FILE_THRESHOLD_SECONDS
+
+def clean_audio_temp_dir():
+    """
+    一時音声ファイル保存ディレクトリのクリーンアップ
+    """
+
+    # 一定時間以上前に作成された入力用音声ファイルの削除
+    for filename in os.listdir(ct.AUDIO_INPUT_DIR):
+        file_path = os.path.join(ct.AUDIO_INPUT_DIR, filename)
+        try:
+            if os.path.isfile(file_path) and is_old_enough(file_path):
+                print(f"Deleting file: {file_path}")
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Error deleting file {file_path}: {e}")
+
+    # 出力用音声ファイルの削除
+    for filename in os.listdir(ct.AUDIO_OUTPUT_DIR):
+        file_path = os.path.join(ct.AUDIO_OUTPUT_DIR, filename)
+        try:
+            if os.path.isfile(file_path) and is_old_enough(file_path):
+                print(f"Deleting file: {file_path}")
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Error deleting file {file_path}: {e}")

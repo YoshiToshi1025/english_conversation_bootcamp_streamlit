@@ -1,6 +1,6 @@
 # アプリケーションについて
 APP_NAME = "英会話 特訓アプリ with 生成AI"
-APP_VERSION = "0.9.4"   # アプリケーションバージョン
+APP_VERSION = "0.9.5"   # アプリケーションバージョン
 
 # デバッグについて
 DEBUG_TAB_FLAG = True   # デバッグ情報表示用タブの表示
@@ -13,11 +13,15 @@ AI_ICON_PATH = "images/ai_icon.png"
 AUDIO_INPUT_DIR = "audio/input"
 AUDIO_OUTPUT_DIR = "audio/output"
 
+# 音声一時ファイルの保持時間（秒）
+AUDIO_TEMP_FILE_THRESHOLD_SECONDS = 600  # 10分
+
 # AI会話設定の選択肢
 SITUATION_OPTION = ["日常_自己紹介", "日常_友人と会話", "日常_レストラン", "日常_道を尋ねる", "ビジネス_挨拶", "ビジネス_会議", "ビジネス_電話応対", "旅行_空港", "旅行_ホテル", "旅行_交通機関", "旅行_緊急時"]  # シチュエーション
 CONVERSATION_LEVEL_OPTION = ["初心者", "初級者", "中級者", "上級者"]     # 会話レベル
 LANGUAGE_OPTION = ["アメリカ英語", "イギリス英語", "オーストラリア英語", "カナダ英語", "ニュージーランド英語"]     # 会話言語
-PLAY_SPEED_OPTION = {"早口":1.2, "普通":1.0, "ゆっくり":0.9, "もっとゆっくり":0.8}      # 発声速度
+PLAY_SPEED_OPTION = {"普通":1.0}      # 発声速度(固定)
+# PLAY_SPEED_OPTION = {"早口":1.2, "普通":1.0, "ゆっくり":0.9, "もっとゆっくり":0.8}      # 発声速度
 
 VOICE_OPTION = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
 
