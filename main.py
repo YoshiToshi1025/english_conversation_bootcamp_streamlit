@@ -54,12 +54,14 @@ if "messages" not in st.session_state:
 
 # 左サイドバーの画面設定
 with st.sidebar:
-    st.markdown("## ⚙️ AI会話設定")
-    st.session_state.ai_conversation_setting_situation = st.selectbox("シチュエーション", options=ct.SITUATION_OPTION, label_visibility="visible")
-    st.session_state.ai_conversation_setting_conversation_level = st.selectbox("会話レベル", options=ct.CONVERSATION_LEVEL_OPTION, label_visibility="visible")
-    st.session_state.ai_conversation_setting_language = st.selectbox("言語", options=ct.LANGUAGE_OPTION, label_visibility="visible")
-    st.session_state.ai_conversation_setting_speed_key = st.selectbox("発声速度", options=list(ct.PLAY_SPEED_OPTION.keys()), index=0, label_visibility="visible")
-    st.session_state.ai_conversation_setting_speed_value = ct.PLAY_SPEED_OPTION[st.session_state.ai_conversation_setting_speed_key]
+    with st.expander("## ⚙️ AI会話設定", expanded=True):
+        st.session_state.ai_conversation_setting_situation = st.selectbox("シチュエーション", options=ct.SITUATION_OPTION, label_visibility="visible")
+        st.session_state.ai_conversation_setting_conversation_level = st.selectbox("会話レベル", options=ct.CONVERSATION_LEVEL_OPTION, label_visibility="visible")
+        st.session_state.ai_conversation_setting_language = st.selectbox("言語", options=ct.LANGUAGE_OPTION, label_visibility="visible")
+        st.session_state.ai_conversation_setting_speed_key = st.selectbox("発声速度", options=list(ct.PLAY_SPEED_OPTION.keys()), index=0, label_visibility="visible")
+        st.session_state.ai_conversation_setting_speed_value = ct.PLAY_SPEED_OPTION[st.session_state.ai_conversation_setting_speed_key]
+    with st.expander("## ⚙️ その他設定", expanded=True):
+        st.session_state.ai_conversation_advice_flag = st.checkbox("会話内容に対してAIによるアドバイスを行う", value=False, label_visibility="visible")
 
     # シチュエーションが変更された場合に会話履歴をリセット
     if st.session_state.pre_situation == "":
@@ -219,6 +221,7 @@ with conversation_tab:
         st.session_state.user_input_update_flag = True
         st.session_state.user_input_mode = ""
 
+        time.sleep(10)  # 音声ファイル再生完了までの待機時間確保
         st.rerun()
 
     elif st.session_state.user_input_mode == "text":
@@ -275,6 +278,7 @@ with conversation_tab:
         st.session_state.user_input_update_flag = True
         st.session_state.user_input_mode = ""
 
+        time.sleep(10)  # 音声ファイル再生完了までの待機時間確保
         st.rerun()
 
 # 評価タブ内の画面設定ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
@@ -287,24 +291,25 @@ with review_tab:
         if message["role"] == "user":
             user_input_text = message["content"]
 
-    # ユーザーの最後の会話文が存在する場合に、評価を実行し画面に表示する
-    if user_input_text and len(user_input_text.strip()) > 0:
-        user_input_text = user_input_text.strip()
+    if st.session_state.ai_conversation_advice_flag:
+        # ユーザーの最後の会話文が存在する場合に、評価を実行し画面に表示する
+        if user_input_text and len(user_input_text.strip()) > 0:
+            user_input_text = user_input_text.strip()
 
-        # ユーザメッセージの画面表示
-        with st.chat_message("user", avatar=ct.USER_ICON_PATH):
-            st.markdown(user_input_text)
+            # ユーザメッセージの画面表示
+            with st.chat_message("user", avatar=ct.USER_ICON_PATH):
+                st.markdown(user_input_text)
 
-        if st.session_state.user_input_update_flag == True:
-            with st.spinner("会話内容の分析中..."):
-                # ユーザー入力値を英会話評価用LLMに渡して評価結果を取得
-                llm_response_evaluation = st.session_state.chain_overall_evaluation.predict(input=user_input_text)
-                st.session_state.llm_response_evaluation = llm_response_evaluation
-                st.session_state.user_input_update_flag = False
+            if st.session_state.user_input_update_flag == True:
+                with st.spinner("会話内容の分析中..."):
+                    # ユーザー入力値を英会話評価用LLMに渡して評価結果を取得
+                    llm_response_evaluation = st.session_state.chain_overall_evaluation.predict(input=user_input_text)
+                    st.session_state.llm_response_evaluation = llm_response_evaluation
+                    st.session_state.user_input_update_flag = False
 
-        # AIメッセージの画面表示とリストへの追加
-        with st.chat_message("assistant", avatar=ct.AI_ICON_PATH):
-            st.markdown(st.session_state.llm_response_evaluation)
+            # AIメッセージの画面表示とリストへの追加
+            with st.chat_message("assistant", avatar=ct.AI_ICON_PATH):
+                st.markdown(st.session_state.llm_response_evaluation)
 
 # 質問・相談タブ内の画面設定ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 with qa_tab:
