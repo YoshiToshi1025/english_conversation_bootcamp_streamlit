@@ -1,9 +1,6 @@
 # アプリケーションについて
 APP_NAME = "英会話 特訓アプリ with 生成AI"
-APP_VERSION = "0.9.7"   # アプリケーションバージョン
-
-# デバッグについて
-DEBUG_TAB_FLAG = True   # デバッグ情報表示用タブの表示
+APP_VERSION = "0.9.8"   # アプリケーションバージョン
 
 # アイコン画像のパス
 USER_ICON_PATH = "images/user_icon.png"

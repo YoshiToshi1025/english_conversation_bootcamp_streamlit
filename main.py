@@ -62,6 +62,7 @@ with st.sidebar:
         st.session_state.ai_conversation_setting_speed_value = ct.PLAY_SPEED_OPTION[st.session_state.ai_conversation_setting_speed_key]
     with st.expander("## ⚙️ その他設定", expanded=True):
         st.session_state.ai_conversation_advice_flag = st.checkbox("会話内容に対してAIによるアドバイスを行う", value=False, label_visibility="visible")
+        st.session_state.display_debug_tab_flag = st.checkbox("デバッグ情報タブを表示する", value=False, label_visibility="visible")
 
     # シチュエーションが変更された場合に会話履歴をリセット
     if st.session_state.pre_situation == "":
@@ -102,7 +103,7 @@ if "chain_qa_tutor" not in st.session_state or st.session_state.messages == []:
         ), st.session_state.qa_memory)
 
 # タブ定義　    デバッグタブ表示指定がある場合はデバッグタブを表示
-if ct.DEBUG_TAB_FLAG:
+if st.session_state.display_debug_tab_flag:
     conversation_tab, review_tab, qa_tab, debug_tab = st.tabs(["🗣️ AIと英会話", "📜 AIによるアドバイス", "🙋 AIに何でも相談", "🛠️ デバッグ"])
 else:
     conversation_tab, review_tab, qa_tab = st.tabs(["🗣️ AIと英会話", "📜 AIによるアドバイス", "🙋 AIに何でも相談"])
@@ -350,7 +351,7 @@ with qa_tab:
         st.rerun()
 
 # デバッグタブ内の画面設定ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
-if ct.DEBUG_TAB_FLAG:
+if st.session_state.display_debug_tab_flag:
     with debug_tab:
         st.info("デバッグ：アプリの動作確認や問題解決のための情報を表示しています。",icon="🛠️")
 
