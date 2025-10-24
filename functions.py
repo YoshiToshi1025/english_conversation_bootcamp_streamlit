@@ -166,6 +166,9 @@ def clean_audio_temp_dir():
     """
 
     # 一定時間以上前に作成された入力用音声ファイルの削除
+    if not os.path.exists(ct.AUDIO_INPUT_DIR):
+        os.makedirs(ct.AUDIO_INPUT_DIR)
+
     for filename in os.listdir(ct.AUDIO_INPUT_DIR):
         file_path = os.path.join(ct.AUDIO_INPUT_DIR, filename)
         try:
@@ -176,6 +179,9 @@ def clean_audio_temp_dir():
             print(f"Error deleting file {file_path}: {e}")
 
     # 出力用音声ファイルの削除
+    if not os.path.exists(ct.AUDIO_OUTPUT_DIR):
+        os.makedirs(ct.AUDIO_OUTPUT_DIR)
+
     for filename in os.listdir(ct.AUDIO_OUTPUT_DIR):
         file_path = os.path.join(ct.AUDIO_OUTPUT_DIR, filename)
         try:
